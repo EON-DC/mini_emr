@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="newPrefix">
+    <file>blue_circle.png</file>
+    <file>circle.png</file>
+    <file>login_back.png</file>
+    <file>spectrum.png</file>
+    <file>upper_arrow.png</file>
+  </qresource>
+</RCC>
