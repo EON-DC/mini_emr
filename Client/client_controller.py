@@ -14,21 +14,17 @@ from Client.client_connector import Connector
 
 
 class WidgetController(QtWidgets.QWidget):
-    # signal 클래스 변수
-    assert_same_id_signal = pyqtSignal(bool)
-
     def __init__(self, connector=Connector):
         assert isinstance(connector, Connector)
         super().__init__()
         self.connector = connector  # db연결 인스턴스
-        self.connector.set_widget(self)
+        self.connector.set_widget_controller(self)
         self.widget_admin = None
         self.widget_chat_room = None
         self.widget_dashboard = None
         self.widget_e_finder = None
         self.widget_login = None
         self.widget_medical = None
-
         self.setUp()
 
     def run(self):

@@ -8,3 +8,4 @@ class WidgetLogin(QtWidgets.QWidget, Ui_LoginWidget):
         super().__init__()
         self.setupUi(self)
         self.controller = ui_controller
+
