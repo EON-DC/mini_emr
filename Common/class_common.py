@@ -6,15 +6,25 @@ from PyQt5 import QtWidgets
 class Common:
     _instance = None
 
-    START_OF_HEADER = chr(1)
+    # START_OF_HEADER = chr(1)
     START_OF_TEXT = chr(2)
-    END_OF_TEXT = chr(3)
+    # END_OF_TEXT = chr(3)
 
     HOST = '127.0.0.1'
     PORT = 9999
     BUFFER = 50000
     FORMAT = "utf-8"
-    HEADER_LENGTH = 30
+
+    LOGIN_ACCESS_REQ = "login_access_request"
+    LOGIN_ACCESS_RES = "login_access_response"
+    PATIENT_ACCESS_REQ = "patient_access_request"
+    PATIENT_ACCESS_RES = "patient_access_response"
+    PATIENT_NAMELIST_REQ = "patient_name_list_request"
+    PATIENT_NAMELIST_RES = "patient_name_list_response"
+    CHAT_ROOM_REQ = "chat_room_request"
+    CHAT_ROOM_RES = "chat_room_response"
+    TRUE = "True"
+    FALSE = "False"
 
     def __new__(cls):
         if not isinstance(cls._instance, cls):
@@ -45,3 +55,4 @@ class Common:
     @staticmethod
     def get_now_time_str():
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+

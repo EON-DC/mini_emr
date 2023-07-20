@@ -44,28 +44,28 @@ class FakeDataMaker:
 
     @staticmethod
     def get_random_date_time():
-        date = datetime.datetime.strptime("2022-01-01 00:00", "%Y-%m-%d %H:%M")
+        date = datetime.datetime.strptime("2022-01-01 00:00:00", "%Y-%m-%d %H:%M:%S")
         random_hour = random.randint(1, 1000)
         temp_date = date + datetime.timedelta(hours=random_hour)
         return temp_date
 
     def get_random_date_time_str(self):
-        return self.get_random_date_time().strftime("%Y-%m-%d %H:%M")
+        return self.get_random_date_time().strftime("%Y-%m-%d %H:%M:%S")
 
     def get_random_fake_name(self):
         return self.faker.name()
 
     @staticmethod
     def get_random_type_job():
-        num = random.randint(1, 3)
-        if num == 1:
-            return "nurse"
-        elif num == 2:
-            return "doctor"
-        elif num == 3:
-            return "admin"
-        print(num)
-        raise 'randint 확인'
+        return random.randint(1, 3)
+        # if num == 1:
+        #     return "nurse"
+        # elif num == 2:
+        #     return "doctor"
+        # elif num == 3:
+        #     return "admin"
+        # print(num)
+        # raise 'randint 확인'
 
     def get_random_phone_num(self):
         return self.faker.phone_number()

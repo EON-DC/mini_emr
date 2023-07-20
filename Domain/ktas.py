@@ -4,7 +4,7 @@ class KTAS:
                  second_category_name, second_category_code,
                  third_category_name, third_category_code,
                  fourth_category_name, fourth_category_code,
-                 final_grade
+                 final_grade, ktas_code
                  ):
         self.first_category_name = first_category_name
         self.first_category_code = first_category_code
@@ -15,6 +15,10 @@ class KTAS:
         self.fourth_category_name = fourth_category_name
         self.fourth_category_code = fourth_category_code
         self.final_grade = final_grade
+        self.ktas_code = ktas_code
+
+    def __str__(self):
+        return self.__repr__()
 
     def __repr__(self):
         return f"{self.__dict__}"

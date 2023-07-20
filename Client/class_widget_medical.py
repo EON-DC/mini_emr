@@ -8,3 +8,19 @@ class WidgetMedical(QtWidgets.QMainWindow, Ui_MedicalWindow):
         super().__init__()
         self.setupUi(self)
         self.controller = ui_controller
+
+    def reset(self):
+        pass
+
+    def setUp(self):
+        self.set_up_widgets_and_labels()
+
+    def close(self):
+        pass
+
+    def show(self):
+        self.setUp()
+        super().show()
+
+    def set_up_widgets_and_labels(self):
+        pass

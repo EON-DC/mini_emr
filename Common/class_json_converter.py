@@ -1,6 +1,10 @@
 import json
 
+from Domain.department import Department
+from Domain.emergency_nurse_record import EmergencyNurseRecord
+from Domain.ktas import KTAS
 from Domain.message import Message
+from Domain.people._employee import Employee
 
 
 class ObjEncoder(json.JSONEncoder):
@@ -47,6 +51,12 @@ class ObjDecoder(json.JSONDecoder):
         super().__init__()
 
     def binary_to_obj(self, binary_str):
+        # object 대신 TRUE or FALSE 로 대답해주는 경우엔 그대로 전송되게 함
+        if binary_str == "True":
+            return binary_str
+        elif binary_str == "False":
+            return binary_str
+
         if isinstance(binary_str, bytes):  # binary -> utf-8
             binary_str = binary_str.decode('utf-8')
         json_string = json.loads(binary_str)  # utf-8 -> json
@@ -56,6 +66,8 @@ class ObjDecoder(json.JSONDecoder):
             result_obj = self.object_mapper(json_string)
         if result_obj is not None:
             return result_obj
+        if isinstance(json_string, str):
+            json_string = json.loads(json_string)
         return json_string
 
         # json_to_object = json.loads(json_string)  # json -> dict(default)
@@ -68,6 +80,14 @@ class ObjDecoder(json.JSONDecoder):
         assert isinstance(dict_obj, dict)
         if "is_confirmed" in dict_obj.keys():
             return Message(**dict_obj)
+        elif "mobile_phone_num_1" in dict_obj.keys():
+            return Employee(**dict_obj)
+        elif "first_category_name" in dict_obj.keys():
+            return KTAS(**dict_obj)
+        elif 'enr_id' in dict_obj.keys():
+            return EmergencyNurseRecord(**dict_obj)
+        elif 'department_id' in dict_obj.keys() and 'job_category' in dict_obj.keys():
+            return Department(**dict_obj)
 
     def list_mapper(self, list_obj):
         assert isinstance(list_obj, list)
@@ -87,7 +107,6 @@ if __name__ == '__main__':
     msg_list = [msg_1, msg_2]
     print(id(msg_1))
     print(id(msg_2))
-
 
     msg_5 = Message(1, 1, 22, "안녕", False)
     print(id(msg_5))

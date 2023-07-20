@@ -1,11 +1,14 @@
+import random
 import re
 import sqlite3
 
 from Back.db_connector import DBConnector
 from Domain.chat_room import ChatRoom
 from Domain.ktas import KTAS
+from Domain.message import Message
 from Domain.people._employee import Employee
 from Common.fake_data_maker import FakeDataMaker
+
 
 def insert_KTAS_data(conn):
     second_category_name_set = set()
@@ -59,9 +62,10 @@ def insert_KTAS_data(conn):
         temp_list.clear()
 
         final_grade = int(word_list.pop())
+        ktas_code = ''.join(['A', second_category_code, third_category_code, fourth_category_code])
         result_list.append(
             KTAS('성인', 'A', second_category_name, second_category_code, third_category_name, third_category_code,
-                 fourth_category_name, fourth_category_code, final_grade))
+                 fourth_category_name, fourth_category_code, final_grade, ktas_code))
 
     with open("../data/child_grade.txt", 'r', encoding='utf-8') as file:
         whole_data = file.read()
@@ -107,12 +111,13 @@ def insert_KTAS_data(conn):
         temp_list.clear()
 
         final_grade = int(word_list.pop())
+        ktas_code = ''.join(['B', second_category_code, third_category_code, fourth_category_code])
 
         result_list.append(
             KTAS('소아', 'B', second_category_name, second_category_code, third_category_name, third_category_code,
-                 fourth_category_name, fourth_category_code, final_grade))
+                 fourth_category_name, fourth_category_code, final_grade, ktas_code))
 
-    c= conn.start_conn()
+    c = conn.start_conn()
     # first_category_name
     # first_category_code
     # second_category_name
@@ -125,7 +130,7 @@ def insert_KTAS_data(conn):
     for i in result_list:
         c.execute('''INSERT INTO tb_ktas (first_category_name, first_category_code, second_category_name,
          second_category_code, third_category_name, third_category_code,
-         fourth_category_name, fourth_category_code, final_grade)
+         fourth_category_name, fourth_category_code, final_grade, ktas_code)
          VALUES (
          :first_category_name, 
          :first_category_code, 
@@ -135,14 +140,15 @@ def insert_KTAS_data(conn):
          :third_category_code, 
          :fourth_category_name,
          :fourth_category_code,
-         :final_grade);''', i.__dict__)
+         :final_grade,
+         :ktas_code);''', i.__dict__)
     conn.commit_db()
     conn.end_conn()
 
 
-def insert_employee_data(conn:DBConnector, size):
+def insert_dummy_employee_data(conn: DBConnector, size):
     # 우선 내 거 하나
-    conn.insert_employee(Employee(None, "박광현", "nurse", "qwer11", "1234", "010-1010-0102", "010-0215-1335"))
+    conn.insert_employee(Employee(None, "박광현", 2, "qwer11", "1234", "010-1010-0102", "010-0215-1335"))
     maker = FakeDataMaker()
     for i in range(size):
         # 가짜 생성
@@ -154,15 +160,51 @@ def insert_employee_data(conn:DBConnector, size):
         phone_2 = maker.get_random_phone_num()
         # 객체화 및 입력
         dummy_employee = Employee(None, name, type_job, login_username, login_pw, phone_1, phone_2)
-        conn.insert_employee(dummy_employee)
-
-def insert_dummy_chat_room(conn:DBConnector, size):
+        dummy_employee = conn.insert_employee(dummy_employee)
+        if dummy_employee.type_job == 1:
+            conn.insert_doctor_job(dummy_employee, random.randint(1, 6))
+        elif dummy_employee.type_job == 2:
+            conn.insert_nurse_job(dummy_employee, random.randint(7, 12))
+        elif dummy_employee.type_job == 3:
+            conn.insert_admin_job(dummy_employee, random.randint(13, 14))
+def insert_dummy_chat_room(conn: DBConnector, size):
     maker = FakeDataMaker()
     for i in range(size):
         # 가짜 생성
         # 객체화 및 입력
-        dummy_employee = ChatRoom()
-        conn.insert_employee(dummy_employee)
+        random_date = maker.get_random_date_time_str()
+        dummy_chat_room = ChatRoom(None, random_date)
+        conn.insert_chat_room(dummy_chat_room)
 
-def insert_dummy_message_data(conn:DBConnector, size):
-    pass
+
+def insert_dummy_employee_chat_room_data(conn: DBConnector, size, employee_range, chat_range):
+    maker = FakeDataMaker()
+    min_id_employee, max_id_employee = employee_range
+    min_id_chat, max_id_chat = chat_range
+    for i in range(size):
+        # 가짜 생성
+        # 객체화 및 입력
+        random_employee_id_1, random_employee_id_2 = random.sample(range(min_id_employee, max_id_employee), 2)
+        random_chat_room_id = random.randint(min_id_chat, max_id_chat)
+        conn.insert_employee_chat_room(random_employee_id_1, random_chat_room_id)
+        conn.insert_employee_chat_room(random_employee_id_2, random_chat_room_id)
+        for _ in range(random.randint(1, 10)):
+            # 가짜 생성
+            # 객체화 및 입력
+            dummy_message_1 = Message(None, random_employee_id_1, random_chat_room_id, maker.get_random_lorem(), False)
+            dummy_message_2 = Message(None, random_employee_id_2, random_chat_room_id, maker.get_random_lorem(), False)
+            conn.insert_message(dummy_message_1)
+            conn.insert_message(dummy_message_2)
+
+
+def insert_dummy_message_data(conn: DBConnector, size, employee_range, chat_range):
+    maker = FakeDataMaker()
+    min_id_employee, max_id_employee = employee_range
+    min_id_chat, max_id_chat = chat_range
+    for i in range(size):
+        # 가짜 생성
+        # 객체화 및 입력
+        random_employee_id = random.randint(min_id_employee, max_id_employee)
+        random_chat_room_id = random.randint(min_id_chat, max_id_chat)
+        dummy_message = Message(None, random_employee_id, random_chat_room_id, maker.get_random_lorem(), False)
+        conn.insert_message(dummy_message)
