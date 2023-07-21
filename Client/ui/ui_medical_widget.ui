@@ -99,7 +99,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="btn_chat_open">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -150,7 +150,7 @@
         <widget class="QWidget" name="widget_2" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="btn_grade_ktas">
             <property name="text">
              <string>응급간호기록</string>
             </property>
@@ -286,7 +286,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="label_patient_name">
          <property name="minimumSize">
           <size>
            <width>100</width>
@@ -300,7 +300,8 @@
           </size>
          </property>
          <property name="text">
-          <string>김아무개(M/55)</string>
+          <string>김아무개(M/55)
+123456</string>
          </property>
         </widget>
        </item>
@@ -331,7 +332,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_10">
+        <widget class="QLabel" name="label_cheif_complain">
          <property name="minimumSize">
           <size>
            <width>150</width>
@@ -339,7 +340,7 @@
           </size>
          </property>
          <property name="text">
-          <string>가슴이 답답해요.</string>
+          <string>배고파요</string>
          </property>
         </widget>
        </item>
@@ -370,7 +371,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_16">
+        <widget class="QLabel" name="label_ktas_grade">
          <property name="minimumSize">
           <size>
            <width>30</width>
@@ -384,7 +385,7 @@
           </size>
          </property>
          <property name="text">
-          <string>1</string>
+          <string>5</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -418,7 +419,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_19">
+        <widget class="QLabel" name="label_ktas_code">
          <property name="minimumSize">
           <size>
            <width>40</width>
@@ -432,7 +433,7 @@
           </size>
          </property>
          <property name="text">
-          <string>ICBA</string>
+          <string>AAA</string>
          </property>
         </widget>
        </item>
@@ -452,7 +453,20 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string/>
+          <string>담당의:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_assigned_doctor_name">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>주선생</string>
          </property>
         </widget>
        </item>
@@ -483,7 +497,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_12">
+        <widget class="QLabel" name="label_register_timestamp">
          <property name="minimumSize">
           <size>
            <width>80</width>
@@ -528,7 +542,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_14">
+        <widget class="QLabel" name="label_time_record_from_resgister">
          <property name="minimumSize">
           <size>
            <width>40</width>
@@ -536,7 +550,7 @@
           </size>
          </property>
          <property name="text">
-          <string>02:22</string>
+          <string>00:00</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -678,7 +692,16 @@
            </widget>
           </item>
           <item>
-           <widget class="QTableWidget" name="tableWidget_2">
+           <widget class="QTableWidget" name="tableWidget_patient_list">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
             <row>
              <property name="text">
               <string/>
@@ -940,7 +963,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_11">
+              <widget class="QPushButton" name="btn_refresh_medical_order">
                <property name="text">
                 <string>Refresh</string>
                </property>
@@ -950,7 +973,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="listWidget">
+           <widget class="QListWidget" name="listWidget_medical_order">
             <item>
              <property name="text">
               <string>1. check v/s q 1hr</string>
@@ -1083,7 +1106,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_now_timestamp">
             <property name="text">
              <string>2023-07-18 10:42</string>
             </property>

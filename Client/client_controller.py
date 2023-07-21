@@ -13,6 +13,7 @@ from Client.class_widget_login import WidgetLogin
 from Client.class_widget_medical import WidgetMedical
 from Client.client_connector import Connector
 from Common.class_common import Common
+from Domain.people._employee import Employee
 
 
 class WidgetController(QtWidgets.QWidget):
@@ -38,6 +39,7 @@ class WidgetController(QtWidgets.QWidget):
     def run(self):
         self.show()
 
+
     def reset(self):
         pass
 
@@ -46,8 +48,8 @@ class WidgetController(QtWidgets.QWidget):
         self.set_up_widgets()
         self.set_up_triggers()
 
-    def close(self):
-        super().close()
+    def disconnect_server(self):
+        self.connector.disconnect()
 
     def show(self):
         # self.widget_admin.show()
@@ -68,26 +70,45 @@ class WidgetController(QtWidgets.QWidget):
     def set_up_triggers(self):
         self.command_signal.connect(self.signal_handler)
 
+    def get_all_employee(self):
+        return self.connector.all_employee_list
+    def get_patient_list(self):
+        return self.connector.patient_table_widget_list
+
     def signal_handler(self, command_str, return_data_obj):
         if command_str == self.common.LOGIN_ACCESS_RES:
             if return_data_obj != self.common.FALSE:
                 self.show_success_login()
             else:
                 return QMessageBox.about(self.widget_login, "로그인 실패", "로그인 정보를 다시 확인해주세요.")
+        elif command_str == self.common.PATIENT_NAMELIST_RES:
+            self.widget_medical.refresh_patient_list_table_view(return_data_obj)
+        elif command_str == self.common.PATIENT_RES:
+            self.widget_medical.refresh_patient_info(return_data_obj)
+        elif command_str == self.common.EMERGENCY_NURSE_RECORD_RES:
+            self.widget_medical.refresh_emergency_nurse_record_info(return_data_obj)
+
+    def open_chat_room_with_employee(self, employee:Employee):
+        self.widget_chat_room:WidgetChatRoom
+        self.connector.send_chat_room_request_with_employee(employee)
+
 
     def show_success_login(self):
         # login 창 닫기
         self.widget_login.close()
-
+        # 윈도우 타이틀 설정
         employee = self.connector.get_login_employee()
-        if employee.type_job in [1, 2]:
-            self.widget_medical: WidgetMedical
-            title = self.widget_medical.windowTitle() + employee.name + '의료통합정보 체계 로그인'
+        self.widget_medical: WidgetMedical
+        if employee.type_job == 1:
+            title = self.widget_medical.windowTitle() + " --- " + employee.name + '의사 의료통합정보 체계 로그인'
+            self.widget_medical.setWindowTitle(title)
+            self.widget_medical.show()
+        elif employee.type_job == 2:
+            title = self.widget_medical.windowTitle() + " --- " + employee.name + '간호사 의료통합정보 체계 로그인'
             self.widget_medical.setWindowTitle(title)
             self.widget_medical.show()
         else:
-            self.widget_admin: WidgetAdmin
-            title = self.widget_admin.windowTitle() + employee.name + '의료통합정보 체계 로그인'
+            title = self.widget_admin.windowTitle() + " --- " + employee.name + '의료통합정보 체계 로그인'
             self.widget_admin.setWindowTitle(title)
             self.widget_admin.show()
 
@@ -98,3 +119,10 @@ class WidgetController(QtWidgets.QWidget):
                 item = widget.layout().takeAt(0)
                 if item.widget():
                     item.widget().deleteLater()
+
+
+    def show_employee_finder_widget(self):
+        self.widget_e_finder.show()
+
+    def show_chat_room_widget(self):
+        self.widget_chat_room.show()

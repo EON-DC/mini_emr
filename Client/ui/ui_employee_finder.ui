@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>512</width>
-    <height>516</height>
+    <height>511</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -93,7 +93,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QTableWidget" name="table_widget_patient_list">
+       <widget class="QTableWidget" name="table_widget_employee_list">
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>

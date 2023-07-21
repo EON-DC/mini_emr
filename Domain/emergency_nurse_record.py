@@ -1,6 +1,6 @@
 class EmergencyNurseRecord:
     def __init__(self, enr_id, register_id, onset_time, ktas_id, cheif_complain, description, recorder_nurse_id,
-                 saved_time, responser):
+                 saved_time, responser, memo):
         self.enr_id = enr_id
         self.register_id = register_id
         self.onset_time = onset_time
@@ -10,6 +10,7 @@ class EmergencyNurseRecord:
         self.recorder_nurse_id = recorder_nurse_id
         self.saved_time = saved_time
         self.responser = responser
+        self.memo = memo
 
     def __str__(self):
         return self.__repr__()

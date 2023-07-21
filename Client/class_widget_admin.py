@@ -12,10 +12,11 @@ class WidgetAdmin(QtWidgets.QMainWindow, Ui_AdminWindow):
         pass
 
     def setUp(self):
-        self.set_up_widgets()
+        self.set_up_widgets_and_labels()
 
     def close(self):
-        pass
+        self.controller.close()
+        super().close()
 
     def show(self):
         self.setUp()

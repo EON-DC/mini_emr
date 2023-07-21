@@ -16,7 +16,7 @@ class WidgetDashBoard(QtWidgets.QMainWindow, Ui_DashBoard):
         self.set_up_widgets()
 
     def close(self):
-        pass
+        super().close()
 
     def show(self):
         self.setUp()

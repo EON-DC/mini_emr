@@ -21,6 +21,7 @@ class WidgetLogin(QtWidgets.QWidget, Ui_LoginWidget):
     def close(self):
         self.le_login.clear()
         self.le_pw.clear()
+        # self.controller.close()
         super().close()
 
     def show(self):

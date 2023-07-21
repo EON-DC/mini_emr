@@ -147,8 +147,10 @@ def insert_KTAS_data(conn):
 
 
 def insert_dummy_employee_data(conn: DBConnector, size):
-    # 우선 내 거 하나
-    conn.insert_employee(Employee(None, "박광현", 2, "qwer11", "1234", "010-1010-0102", "010-0215-1335"))
+
+    conn.insert_employee(Employee(None, "이승신", 2, "qwer11", "1234", "010-1010-0102", "010-0215-1335"))
+    conn.insert_employee(Employee(None, "주혜인", 1, "qwer12", "1234", "010-1010-0102", "010-0215-1335"))
+    conn.insert_employee(Employee(None, "호후현", 3, "qwer13", "1234", "010-1010-0102", "010-0215-1335"))
     maker = FakeDataMaker()
     for i in range(size):
         # 가짜 생성

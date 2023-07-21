@@ -9,6 +9,6 @@ if __name__ == '__main__':
     insert_KTAS_data(db_conn)
     insert_dummy_employee_data(db_conn, 30)
     insert_dummy_chat_room(db_conn, 30)
-    insert_dummy_employee_chat_room_data(db_conn, 100, (1, 30), (1, 30))
+    insert_dummy_employee_chat_room_data(db_conn, 20, (1, 30), (1, 30))
     server = EMRServer(db_conn)
     server.start()

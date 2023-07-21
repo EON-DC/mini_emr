@@ -14,3 +14,12 @@ class Employee:
 
     def __repr__(self):
         return f"{self.__dict__}"
+
+    def get_job(self):
+        if self.type_job == 1:
+            return "의사"
+        elif self.type_job == 2:
+            return "간호사"
+        elif self.type_job == 3:
+            return "행정 직원"
+        raise "type job 확인 요망"

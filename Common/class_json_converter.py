@@ -5,6 +5,7 @@ from Domain.emergency_nurse_record import EmergencyNurseRecord
 from Domain.ktas import KTAS
 from Domain.message import Message
 from Domain.people._employee import Employee
+from Domain.people.patient import Patient
 
 
 class ObjEncoder(json.JSONEncoder):
@@ -59,7 +60,18 @@ class ObjDecoder(json.JSONDecoder):
 
         if isinstance(binary_str, bytes):  # binary -> utf-8
             binary_str = binary_str.decode('utf-8')
+
+        # 리스트 내 튜플 타입 처리
+        if binary_str.startswith("[("):
+            result = self.list_str_convert(binary_str)
+            return result
+        if binary_str.startswith("("):
+            result = self.tuple_str_convert(binary_str)
+            return result
+        if "'" in binary_str:
+            binary_str = binary_str.replace("'", '"')
         json_string = json.loads(binary_str)  # utf-8 -> json
+
         if isinstance(json_string, list):
             result_obj = self.list_mapper(json_string)
         else:
@@ -71,6 +83,29 @@ class ObjDecoder(json.JSONDecoder):
         return json_string
 
         # json_to_object = json.loads(json_string)  # json -> dict(default)
+
+    def tuple_str_convert(self, tuple_str):
+        temp_list = tuple_str[1:len(tuple_str)-1].replace(" ", "").replace("'", '').split(',')
+        result_list = list()
+        for item in temp_list:
+            if item.isdigit():
+                result_list.append(int(item))
+            else:
+                result_list.append(item)
+        return tuple(result_list)
+
+
+    def list_str_convert(self, double_list_str):
+        temp_list = double_list_str[1:len(double_list_str) - 1].replace(" ", "").replace("'", '').split('),(')
+        result_list = list()
+        for row in temp_list:
+            if row.startswith('('):
+                row = row[1:]
+            if row.endswith(')'):
+                row = row[:len(row)-1]
+            str_list = row.split(',')
+            result_list.append(tuple(str_list))
+        return result_list
 
     def object_mapper(self, dict_obj):
         if isinstance(dict_obj, str):
@@ -88,41 +123,24 @@ class ObjDecoder(json.JSONDecoder):
             return EmergencyNurseRecord(**dict_obj)
         elif 'department_id' in dict_obj.keys() and 'job_category' in dict_obj.keys():
             return Department(**dict_obj)
+        elif 'patient_id' in dict_obj.keys() and 'birth_date' in dict_obj.keys():
+            return Patient(**dict_obj)
 
     def list_mapper(self, list_obj):
         assert isinstance(list_obj, list)
         result_list = list()
-        for o in list_obj:
-            converted_o = self.object_mapper(o)
-            result_list.append(converted_o)
+        try:
+            for o in list_obj:
+                converted_o = self.object_mapper(o)
+                result_list.append(converted_o)
+        except:
+            print("객체화 불가")
+            result_list = list_obj
         return result_list
 
 
 if __name__ == '__main__':
-    msg_1 = Message(1, 1, 22, "안녕", False)
-    msg_2 = Message(2, 1, 21, "sdfsdlfsjdfl", False)
-    msg_3 = Message(None, 7, 21, "abcde", False)
-    msg_4 = Message(2, 5, 100, "fghij", True)
-
-    msg_list = [msg_1, msg_2]
-    print(id(msg_1))
-    print(id(msg_2))
-
-    msg_5 = Message(1, 1, 22, "안녕", False)
-    print(id(msg_5))
-    msg_list.remove(msg_5)
-
-    print(msg_list)
-
-    # encoder = ObjEncoder()
-    # decoder = ObjDecoder()
-
-    # list_obj_ = [msg_1, msg_2, msg_3, msg_4]
-    # bytes_list_obj = encoder.toJSON_as_binary(list_obj_)
-    # result_list = decoder.binary_to_obj(bytes_list_obj)
-
-    # result = encoder.toJSON_as_binary(msg_1)
-    # print(result)
-
-    # result_obj = decoder.binary_to_obj(result)
-    # print(result_obj)
+    test_str = f"""{[("IC-1", "김철수(M/55)", "김순재/조운", "접수중"),
+                     ("IC-2", "관우(M/22)", "김순재/박사라", "접수중")]}"""
+    result = ObjDecoder().binary_to_obj(test_str)
+    print(result)
