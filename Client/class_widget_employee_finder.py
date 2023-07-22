@@ -31,6 +31,7 @@ class WidgetEmployeeFinder(QtWidgets.QWidget,Ui_EmployeeFinder ):
     def open_chat_room(self, row):
         selected_employee = self.controller.get_all_employee()[row]
         self.controller.open_chat_room_with_employee(selected_employee)
+        self.close()
 
     def refresh_employee_list_table(self):
         employee_list = self.controller.get_all_employee()

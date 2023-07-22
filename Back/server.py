@@ -9,6 +9,7 @@ from Back.db_connector import DBConnector
 from Common.class_common import Common
 from Common.class_json_converter import ObjDecoder, ObjEncoder
 from Domain.dto.dto_class import DTOMaker
+from Domain.message import Message
 from Domain.people._employee import Employee
 
 
@@ -62,7 +63,6 @@ class EMRServer:
 
                 else:
                     message = self.receive_message(notified_socket)
-                    print(message, '연결해제됨')
                     if message is False:
                         self.sockets_list.remove(notified_socket)
                         print(notified_socket, '연결해제됨')
@@ -91,7 +91,7 @@ class EMRServer:
         message_to_send = f"{message_to_send:<{self.common.BUFFER}}"
 
         print(f"SERVER SENDED: (HEADER: {header} | DATA: {data})")
-        client_socket.sendall(message_to_send.encode(self.common.FORMAT))
+        client_socket.send(message_to_send.encode(self.common.FORMAT))
 
     def header_data_distributor(self, recv_encoded_message):
         decoded_message = recv_encoded_message.decode(self.common.FORMAT).strip()
@@ -165,16 +165,33 @@ class EMRServer:
                             stored_patient_list[first_patient_index].register_number)
                         self.send_message(client_socket, self.common.EMERGENCY_NURSE_RECORD_RES,
                                           f"{emergency_nurse_record}")
-                    # patient 보내기
+                    # all_employee 보내기
                     employee_list = self.db_conn.find_all_employee()
                     self.send_message(client_socket, self.common.ALL_EMPLOYEE_LIST_RES,
                                       f"{employee_list}")
+                    # all_employee_department 보내기
+                    all_employee_department = self.db_conn.find_all_employee_department()
+                    self.send_message(client_socket, self.common.ALL_EMPLOYEE_DEPARTMENT_LIST_RES,
+                                      f"{all_employee_department}")
+
             elif request_header == self.common.CHAT_ROOM_REQ:  
                 assert isinstance(request_data, tuple)
                 login_employee_id, request_employee_id= request_data
                 chat_room_id = self.db_conn.find_chat_room_by_two_employee_id(login_employee_id, request_employee_id)
+                chat_room = self.db_conn.find_chat_room_by_id(chat_room_id)
+                self.send_message(client_socket, self.common.CHAT_ROOM_RES, self.encoder.toJSON_an_object(chat_room))
                 message_list = self.db_conn.find_messages_by_chat_room_id(chat_room_id)
-                self.send_message(self.common.MESSAGE_LIST_RES, self.encoder.toJSON_an_object(message_list))
-                
+                self.send_message(client_socket, self.common.MESSAGE_LIST_RES, self.encoder.toJSON_an_object(message_list))
+
+            elif request_header == self.common.SEND_A_MESSAGE_REQ:
+                assert isinstance(request_data, Message)
+                arrived_message = request_data
+                processed_message = self.db_conn.insert_message(arrived_message)
+                data = self.encoder.toJSON_an_object(processed_message)
+                for s in self.sockets_list:
+                    if s != self.server_socket:
+                        self.send_message(s, self.common.SEND_A_MESSAGE_RES, data)
+
+
                 
             return True

@@ -87,12 +87,22 @@ class WidgetController(QtWidgets.QWidget):
             self.widget_medical.refresh_patient_info(return_data_obj)
         elif command_str == self.common.EMERGENCY_NURSE_RECORD_RES:
             self.widget_medical.refresh_emergency_nurse_record_info(return_data_obj)
+        elif command_str == self.common.CHAT_ROOM_RES:
+            self.widget_chat_room.close()
+            self.widget_chat_room.show()
+        elif command_str == self.common.SEND_A_MESSAGE_RES:
+            self.refresh_chat_room_plain_text()
 
     def open_chat_room_with_employee(self, employee:Employee):
-        self.widget_chat_room:WidgetChatRoom
         self.connector.send_chat_room_request_with_employee(employee)
+        self.widget_chat_room:WidgetChatRoom
+        self.widget_chat_room.show()
 
+    def send_message_to_connect(self, msg_str):
+        self.connector.send_msg_to_server(msg_str)
 
+    def refresh_chat_room_plain_text(self):
+        self.widget_chat_room.refresh_plain_text()
     def show_success_login(self):
         # login 창 닫기
         self.widget_login.close()

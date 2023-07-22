@@ -35,7 +35,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="label_employee_name">
             <property name="text">
              <string>김연아</string>
             </property>
@@ -49,7 +49,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="label_employee_department">
             <property name="text">
              <string>내과</string>
             </property>
@@ -59,7 +59,10 @@
         </widget>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit">
+        <widget class="QPlainTextEdit" name="plainTextEdit_chat">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
          <property name="plainText">
           <string>&gt;박광현 (나) : IC-1번 김철수님 NRS 6점 chest pain이요.
 &gt;김연아 (상대) : 처방낼게요.</string>
@@ -76,20 +79,41 @@
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="lineEdit_to_send">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="minimumSize">
              <size>
-              <width>0</width>
-              <height>80</height>
+              <width>250</width>
+              <height>77</height>
              </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>77</height>
+             </size>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="btn_to_send">
             <property name="minimumSize">
              <size>
-              <width>0</width>
+              <width>75</width>
+              <height>80</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>75</width>
               <height>80</height>
              </size>
             </property>

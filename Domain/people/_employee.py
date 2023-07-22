@@ -15,6 +15,9 @@ class Employee:
     def __repr__(self):
         return f"{self.__dict__}"
 
+    def copy(self):
+        return Employee(self.employee_id, self.name, self.type_job, self.login_username, self.login_password, self.mobile_phone_num_1, self.mobile_phone_num_2)
+
     def get_job(self):
         if self.type_job == 1:
             return "의사"

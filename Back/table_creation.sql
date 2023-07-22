@@ -150,7 +150,22 @@ CREATE TABLE "tb_medical_order" (
 
 INSERT INTO tb_employee("name", "type_job", "login_username", "login_password", "mobile_phone_num_1", "mobile_phone_num_2") values
 ("박광현", 2, "qqq", "1234", "010-1234-5678","-"),
-("노우현", 1, "qq", "1234", "010-2222-5678","-");
+("노우현", 1, "qq", "1234", "010-2222-5678","-"),
+("주혜인", 2, "q123", "1234", "010-4422-5678","-");
+
+INSERT INTO tb_chat_room("created_time") values ("2023-07-22 09:00:00"),("2023-07-21 21:00:00");
+INSERT INTO tb_employee_chat_room("chat_room_id","employee_id") values (1, 1),
+(1, 2),
+(2, 1),
+(2, 3);
+
+INSERT INTO tb_message("sender_employee_id","chat_room_id","contents","is_confirmed") values
+(1, 1, "ER 김철수님 NRS 7점 chest pain 호소합니다.", 0),
+(1, 1, "처방주세요", 0),
+(2, 1, "알겠습니다. 처방대로 주세요, 금방 가겠습니다.", 0),
+(2, 2, "EDTA 보틀좀 빌려주세요", 0),
+(1, 2, "우리도 없어요 죄송", 0);
+
 
 INSERT INTO tb_nurse('employee_id', 'assigned_ward_id') values
 (1, 9);

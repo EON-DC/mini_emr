@@ -149,7 +149,6 @@ def insert_KTAS_data(conn):
 def insert_dummy_employee_data(conn: DBConnector, size):
 
     conn.insert_employee(Employee(None, "이승신", 2, "qwer11", "1234", "010-1010-0102", "010-0215-1335"))
-    conn.insert_employee(Employee(None, "주혜인", 1, "qwer12", "1234", "010-1010-0102", "010-0215-1335"))
     conn.insert_employee(Employee(None, "호후현", 3, "qwer13", "1234", "010-1010-0102", "010-0215-1335"))
     maker = FakeDataMaker()
     for i in range(size):
@@ -206,7 +205,7 @@ def insert_dummy_message_data(conn: DBConnector, size, employee_range, chat_rang
     for i in range(size):
         # 가짜 생성
         # 객체화 및 입력
-        random_employee_id = random.randint(min_id_employee, max_id_employee)
-        random_chat_room_id = random.randint(min_id_chat, max_id_chat)
+        random_employee_id = random.randint(4, max_id_employee)
+        random_chat_room_id = random.randint(4, max_id_chat)
         dummy_message = Message(None, random_employee_id, random_chat_room_id, maker.get_random_lorem(), False)
         conn.insert_message(dummy_message)

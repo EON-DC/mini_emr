@@ -122,6 +122,35 @@ class DBConnector:
             result_list.append(Employee(*row))
         return result_list
 
+    def find_all_employee_department(self):
+        all_employee_list = self.find_all_employee()
+        c = self.start_conn()
+        result_list = list()
+        for e in all_employee_list:
+            name = None
+            if e.type_job == 1:
+                name = c.execute(f"""
+                    select name from tb_department where department_id = 
+                        (select assigned_department_id from tb_doctor where employee_id = {e.employee_id})
+                """).fetchone()
+            elif e.type_job ==2:
+                name = c.execute(f"""
+                    select name from tb_department where department_id = 
+                        (select assigned_ward_id from tb_nurse where employee_id = {e.employee_id})
+                """).fetchone()
+            elif e.type_job ==3:
+                name = c.execute(f"""
+                    select name from tb_department where department_id = 
+                        (select assigned_part_id from tb_administration where employee_id = {e.employee_id})
+                """).fetchone()
+
+            if name is None:
+                name = "-"
+            else:
+                name = name[0]
+            result_list.append(name)
+        return result_list
+
     def assert_login_username_and_password(self, username, password):
         c = self.start_conn()
         fetched_row = c.execute(f'select * from tb_employee where login_username=? and login_password=?',
@@ -198,9 +227,10 @@ class DBConnector:
     def create_chat_room(self, login_employee_id, request_employee_id):
         c = self.start_conn()
         now_time_str = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         c.execute(f"""
-            insert into tb_chat_room(created_time) values ({now_time_str})
-        """)
+            insert into tb_chat_room(created_time) values (?)
+        """, (f"{now_time_str}",))
         self.commit_db()
         last_index = c.execute(f"""
             select chat_room_id from tb_chat_room order by chat_room_id desc limit 1
@@ -363,9 +393,8 @@ class DBConnector:
     def find_messages_by_chat_room_id(self, chat_room_id):
         c = self.start_conn()
         fetched_rows = c.execute(f"""
-            select * from tb_message where message_id in 
-            (select employee_id from tb_employee_chat_room where chat_room_id = {chat_room_id})
-        """).fetchall()
+            select * from tb_message where chat_room_id = ?
+        """, (chat_room_id, )).fetchall()
         result_list = list()
         for row in fetched_rows:
             result_list.append(Message(*row))
@@ -387,10 +416,10 @@ class DBConnector:
 
 if __name__ == '__main__':
     conn = DBConnector(test_option=True)
-    bed_id_list, name_list, = conn.find_bed_id_and_name_list_by_employee_id(1)
-    for i in bed_id_list:
-        print(conn.find_patient_by_bed_id(i))
-
+    # bed_id_list, name_list, = conn.find_bed_id_and_name_list_by_employee_id(1)
+    # for i in bed_id_list:
+    #     print(conn.find_patient_by_bed_id(i))
+    conn.create_chat_room(1, 11)
 
     # conn.create_tables()
 
@@ -403,3 +432,4 @@ if __name__ == '__main__':
     #
     # print(conn.find_employee_by_id(10))
     # print(conn.find_messages_by_chat_room_id(10))
+

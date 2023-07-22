@@ -4,7 +4,9 @@ from threading import Thread
 
 from Common.class_common import Common
 from Common.class_json_converter import ObjEncoder, ObjDecoder
+from Domain.chat_room import ChatRoom
 from Domain.dto.dto_class import DTOMaker
+from Domain.message import Message
 from Domain.people._employee import Employee
 
 
@@ -17,6 +19,7 @@ class Connector:
 
         self.dto_maker = None
         self.login_employee = None
+        self.selected_employee = None
         self.selected_patient = None
         self.selected_patient_medical_order = None
         self.selected_patient_emergency_nurse_record = None
@@ -24,9 +27,11 @@ class Connector:
         self.patient_table_widget_list = None
         self.bed_id_list = None
         self.bed_name_list = None
-        self.selected_chat_room = None
+        self.selected_chat_room = ChatRoom(None, None)
         self.is_keep_on_thread = True
         self.all_employee_list = list()
+        self.selected_chat_room.employee_list = self.all_employee_list
+        self.all_employee_department = list()
 
         self.encoder = ObjEncoder()
         self.decoder = ObjDecoder()
@@ -118,6 +123,33 @@ class Connector:
                 self.all_employee_list.clear()
                 self.all_employee_list.extend(response_data)
 
+            # 직원 전체 부서 정보
+            elif response_header == self.common.ALL_EMPLOYEE_DEPARTMENT_LIST_RES:
+                assert isinstance(response_data, list)
+                self.all_employee_department.clear()
+                self.all_employee_department.extend(response_data)
+                print("부서 정보 들어옴:", end="%%%%%%")
+                print(self.all_employee_department)
+
+            # 선택 채팅방 정보 받음
+            elif response_header == self.common.CHAT_ROOM_RES:
+                assert isinstance(response_data, ChatRoom)
+                self.selected_chat_room.chat_room_id = response_data.chat_room_id
+                self.controller.command_signal.emit(self.common.CHAT_ROOM_RES, response_data)
+
+            # 메시지 리스트 받음
+            elif response_header == self.common.MESSAGE_LIST_RES:
+                assert isinstance(response_data, list) and isinstance(response_data[0], Message)
+                self.selected_chat_room.append_or_extend_message(response_data)
+                self.controller.command_signal.emit(self.common.SEND_A_MESSAGE_RES, '')
+
+            # 단발성 메시지 수신
+            elif response_header == self.common.SEND_A_MESSAGE_RES:
+                assert isinstance(response_data, Message)
+                arrival_message = response_data
+                self.selected_chat_room.append_or_extend_message(arrival_message)
+                self.controller.command_signal.emit(self.common.SEND_A_MESSAGE_RES, arrival_message)
+
     def send_message(self, header, data):
         assert isinstance(header, str) or isinstance(header, bytes)
         assert isinstance(data, str) or isinstance(data, bytes)
@@ -145,5 +177,25 @@ class Connector:
         return header, data
 
     def send_chat_room_request_with_employee(self, employee: Employee):
+        self.selected_employee = employee
         data = f"{(self.login_employee.employee_id, employee.employee_id)}"
         self.send_message(self.common.CHAT_ROOM_REQ, f"{data}" )
+
+    def send_msg_to_server(self, msg_str):
+        new_msg = Message(None, self.login_employee.employee_id, self.selected_chat_room.chat_room_id, msg_str, False)
+        data = self.encoder.toJSON_an_object(new_msg)
+        self.send_message(self.common.SEND_A_MESSAGE_REQ, data)
+
+    def get_messages_as_string(self, selected_chat_room_id=None):
+        msg_list = self.selected_chat_room.message_list
+        selected_msg_list = [x for x in msg_list if x.chat_room_id == selected_chat_room_id]
+        result_list = list()
+        for m in selected_msg_list:
+            m:Message
+            if m.sender_employee_id == self.login_employee.employee_id:
+                sender_name = f"{self.login_employee.name}(나)"
+            else:
+                sender_name = f"{self.selected_employee.name}(상대)"
+            a_line = f"{sender_name} >> {m.contents}"
+            result_list.append(a_line)
+        return result_list
